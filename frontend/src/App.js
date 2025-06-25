@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
 
@@ -29,8 +29,6 @@ function App() {
   const [auctionDuration, setAuctionDuration] = useState(60); // duration in minutes
   const showMessage = (msg) => {
     console.log("Status:", msg);
-  const showMessage = (msg) => {
-    console.log("Status:", msg);
     setStatusMessage(msg);
     if (statusTimeoutRef.current) {
       clearTimeout(statusTimeoutRef.current);
@@ -40,6 +38,8 @@ function App() {
       statusTimeoutRef.current = null;
     }, 4000);
   };
+
+  const register = async () => {
     try {
       await axios.post('/users/register', registerData);
       setRegisterData({ name: '', email: '', password: '' });
@@ -64,7 +64,7 @@ function App() {
     }
   };
 
-  const fetchAuctions = async () => {
+  const fetchAuctions = useCallback(async () => {
     try {
       const res = await axios.get('/auctions', {
         headers: { Authorization: `Bearer ${token}` }
@@ -74,7 +74,8 @@ function App() {
       showMessage('❌ Erreur lors du chargement des enchères');
       console.error(err);
     }
-  };
+  }, [token]);
+
   const createAuction = async () => {
     try {
       await axios.post('/auctions', {
@@ -125,7 +126,7 @@ function App() {
 
   useEffect(() => {
     if (token) fetchAuctions();
-  }, [token]);
+  }, [token, fetchAuctions]);
 
   return (
     <div style={{ padding: '20px' }}>
@@ -139,16 +140,18 @@ function App() {
 
       {!token && (
         <>
-          <button onClick={() => setShowLoginForm(true)}>Se connecter</button>
-          <button onClick={() => setShowRegisterForm(true)}>Créer un compte</button>
+          <button onClick={() => {
+            setShowLoginForm(true);
+            setShowRegisterForm(false); // ✅ cache l'autre
+          }}>Se connecter</button>
+
+          <button onClick={() => {
+            setShowRegisterForm(true);
+            setShowLoginForm(false); // ✅ cache l'autre
+          }}>Créer un compte</button>
         </>
       )}
-      {token && (
-        <>
-          <button onClick={fetchAuctions}>🔄 Rafraîchir les enchères</button>
-          <button onClick={() => setShowAuctionForm(true)}>➕ Créer une enchère</button>
-        </>
-      )}
+
 
       <hr />
 
