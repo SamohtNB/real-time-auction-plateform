@@ -16,11 +16,14 @@
     "url": "https://github.com/SamohtNB/real-time-auction-plateform/issues"
   },
   "homepage": "https://github.com/SamohtNB/real-time-auction-plateform#readme",
-  "description": "",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
-  }
+  },
+  "description": ""
 }
