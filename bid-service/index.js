@@ -4,7 +4,14 @@ const http = require('http');
 const socketIo = require('socket.io');
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server,
+  {
+    cors: {
+      origin: "http://localhost:3006",
+      methods: ["GET", "POST"]
+    }
+  }
+);
 app.use(bodyParser.json());
 
 let bids = [];
